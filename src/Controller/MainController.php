@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\SearchService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,11 +30,44 @@ class MainController extends Controller
     {
         $threadTreeService->set_subreddit_name($subreddit);
 
-        $subreddit_thread_array = $threadTreeService->request_subreddit($subreddit);
+        $threadTreeService->gather_posts();
 
         return $this->render('main/subreddit.html.twig', [
             'controller_name' => 'MainController',
             'subreddit_name' => $subreddit
+        ]);
+    }
+
+    /**
+     * @Route("/search/{query_string}", name="search")
+     * @param SearchService $searchService
+     * @param string $query_string
+     * @return Response
+     */
+    public function search_posts(SearchService $searchService, string $query_string) : Response
+    {
+        $searchService->set_query_string($query_string);
+        $searchService->gather_posts();
+
+        return $this->render('main/search.html.twig', [
+            'controller_name' => 'MainController'
+        ]);
+    }
+
+    /**
+     * @Route("/r/{subreddit}/{query_string}", name="subreddit_search")
+     * @param SearchService $searchService
+     * @param string $query_string
+     * @return Response
+     */
+    public function search_subreddit_posts(SearchService $searchService, string $subreddit, string $query_string) : Response
+    {
+        $searchService->set_path('r/' . $subreddit . '/');
+        $searchService->set_query_string($query_string, true);
+        $searchService->gather_posts();
+
+        return $this->render('main/search.html.twig', [
+            'controller_name' => 'MainController'
         ]);
     }
 }
