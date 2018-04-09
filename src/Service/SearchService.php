@@ -3,10 +3,9 @@ namespace App\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use App\BriefPost;
-use App\Service\ThreadTreeService;
+use App\Service\ThreadService;
 
 class SearchService{
     const API_HOST = 'https://www.reddit.com/';
@@ -15,23 +14,38 @@ class SearchService{
     protected $path = '';
     protected $query_string;
     protected $limit_to_subreddit;
+    protected $ThreadTreeService;
 
-    public function __construct(ThreadTreeService $threadTreeService)
+    public function __construct(ThreadService $threadService)
     {
-        $this->ThreadTreeService = $threadTreeService;
+        $this->ThreadTreeService = $threadService;
     }
 
+    /**
+     * Allows for a path to be prefixed, such as a subreddit or topic allowing a more specific search
+     * @param string $path
+     */
     public function set_path(string $path)
     {
         $this->path = $this->sanitize_query_string($path);
     }
 
+    /**
+     * Provide the string with which we're querying
+     * @param $query_string
+     * @param bool $limit_to_subreddit Restricts the search to the provided subreddit
+     */
     public function set_query_string($query_string, $limit_to_subreddit = false)
     {
         $this->query_string = $this->sanitize_query_string($query_string);
         $this->limit_to_subreddit = $limit_to_subreddit;
     }
 
+    /**
+     * Quickly sanitize the query string
+     * @param $query_string
+     * @return mixed|string
+     */
     protected function sanitize_query_string($query_string)
     {
         $query_string = filter_var($query_string, FILTER_SANITIZE_URL);
@@ -46,7 +60,12 @@ class SearchService{
         return $query_string;
     }
 
-    public function request_results($query_string)
+    /**
+     * Perform a request to retrieve search results
+     * @param $query_string
+     * @return array|mixed
+     */
+    protected function request_results($query_string)
     {
         # Start a new Guzzle client
         $client = new Client();
@@ -68,30 +87,27 @@ class SearchService{
                 ['query' => $query_params]
             );
 
-            $streams_array = json_decode($response->getBody(), true);
+            $posts_array = json_decode($response->getBody(), true);
 
         }catch (Exception\GuzzleException $guzzle_ex)
         {
-            $streams_array = array('orange');
+            $posts_array = [];
         }
-        return $streams_array;
+        return $posts_array;
     }
 
+    /**
+     * Performs the search against Reddit and returns a JSON string
+     * @return string
+     */
     public function gather_posts()
     {
         $post_array = $this->request_results($this->query_string);
 
-        $post_array = $this->ThreadTreeService->coalesce_post_array($post_array);
+        $post_array = $this->ThreadTreeService->massage_post_data($post_array);
 
         $post_collection = $this->ThreadTreeService->construct_posts($post_array);
 
-        $this->ThreadTreeService->display_posts($post_collection);
+        return $this->ThreadTreeService->to_json($this->ThreadTreeService->to_array($post_collection));
     }
-
-    public function coalesce_post_array($response_post_array)
-    {
-        return $response_post_array['data']['children'];
-    }
-
-
 }

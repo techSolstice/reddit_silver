@@ -1,9 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reddit Foundation{% endblock %}
+{% block title %}Reddit using Foundation{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.1.1/motion-ui.min.css" />
+    <link rel="stylesheet" href="{{ asset('build/main.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/js/foundation.min.js"></script>
+    <script>$(document).foundation();</script>
+    <script src="{{ asset('build/mainjs.js') }}"></script>
+    <script src="{{ asset('js/pagination.js') }}"></script>
+    <script src="{{ asset('js/search.js') }}"></script>
+    <script src="{{ asset('js/navigation.js') }}"></script>
+{% endblock %}
 
 {% block body %}
-<div>
-    Hello world!
-</div>
+    {% include 'stubs/navigation.html.twig' %}
+
+    <div id="headlines" class="orbit" role="region" aria-label="News Headlines" data-orbit>
+        <div class="orbit-wrapper">
+            <div class="orbit-controls">
+                <button class="orbit-previous"><span class="show-for-sr">Previous Slide</span>&#9664;&#xFE0E;</button>
+                <button class="orbit-next"><span class="show-for-sr">Next Slide</span>&#9654;&#xFE0E;</button>
+            </div>
+            <ul class="orbit-container">
+                {% for post in news_array | slice(0,5) %}
+                <li class="{% if loop.index0 == 0 %} {{ 'is-active ' }} {% endif %}orbit-slide">
+                    <div>
+                        <h2 class="text-center"><a href="{{ post.content_url }}">{{ post.title }}</a> <span class="post_domain">({{ post.content_domain }})</span></h2>
+                    <h5 class="text-center">Submitted {{ post.date_created | date}} by {{ post.author }}</h5>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <nav class="orbit-bullets">
+            <button class="is-active" data-slide="0"><span class="show-for-sr">Current Slide</span></button>
+            <button data-slide="1"></button>
+            <button data-slide="2"></button>
+            <button data-slide="3"></button>
+            <button data-slide="4"></button>
+        </nav>
+    </div>
+
+    <div id="thread">
+        {% for post in post_array %}
+            <ul class="thread accordion{% if loop.index > 5 %}{{ " hidden_post" }}{% endif %}" data-accordion data-allow-all-closed="true">
+                <li class="accordion-item" data-accordion-item>
+                    <a href="#" class="accordion-title"><span class="stat post_score">{{ post.score }}</span> points<div class="post_title"><b>{{ post.title }}</b></div></a>
+                    <div class="accordion-content" data-tab-content>
+                        {{ post.date_created | date }} by {{ post.author }}
+                    </div>
+                </li>
+            </ul>
+        {% endfor %}
+    </div>
+
+    <nav aria-label="Pagination">
+        <ul id="page_pagination" class="pagination text-center">
+            <li class="pagination-previous" id="pagination_previous"><a href="#" class="disabled" aria-label="Previous page">Previous</a></li>
+            <li class="current"><span class="show-for-sr">You're on page</span> <span id="current_page_number">1</span></li>
+            <li class="pagination-next" id="pagination_next"><a href="#" aria-label="Next page">Next</a></li>
+        </ul>
+    </nav>
 {% endblock %}

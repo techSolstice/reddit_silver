@@ -1,0 +1,29 @@
+$primary-color: #363636;
+$offblack: #222;
+$accordion-plusminus: false;
+
+body{
+  background-color: $primary-color;
+}
+
+.title-bar{
+  background-color: $primary-color  !important;
+}
+
+.post_domain{
+  font-size: 0.6em;
+}
+.post_title{
+  font-size: 1.5em;
+}
+.hidden_post{
+  display: none;
+}
+.orbit-slide {
+  padding: 2rem 4rem;
+}
+.orbit-container{
+  color: $offblack;
+  background: white;
+}
+

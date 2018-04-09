@@ -12,6 +12,8 @@ abstract class Media
     protected $embed_height;
     protected $embed_url;
 
+    protected $media_type;
+
     public function __construct($width, $height, $url, $embed_width, $embed_height, $embed_url)
     {
         $this->width = $width;
@@ -21,4 +23,6 @@ abstract class Media
         $this->embed_height = $embed_height;
         $this->embed_url = $embed_url;
     }
+
+
 }
