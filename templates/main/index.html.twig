@@ -12,7 +12,6 @@
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/js/foundation.min.js"></script>
     <script>$(document).foundation();</script>
-    <script src="{{ asset('build/mainjs.js') }}"></script>
     <script src="{{ asset('js/pagination.js') }}"></script>
     <script src="{{ asset('js/search.js') }}"></script>
     <script src="{{ asset('js/navigation.js') }}"></script>
@@ -51,7 +50,7 @@
         {% for post in post_array %}
             <ul class="thread accordion{% if loop.index > 5 %}{{ " hidden_post" }}{% endif %}" data-accordion data-allow-all-closed="true">
                 <li class="accordion-item" data-accordion-item>
-                    <a href="#" class="accordion-title"><span class="stat post_score">{{ post.score }}</span> points<div class="post_title"><b>{{ post.title }}</b></div></a>
+                    <a href="#" class="accordion-title"><span class="stat post_score">{{ post.score }}</span> points<div class="post_title button large" onclick="call_external_url('https://www.reddit.com{{ post.permalink }}')">{{ post.title }}</b></div></a>
                     <div class="accordion-content" data-tab-content>
                         {{ post.date_created | date }} by {{ post.author }}
                     </div>

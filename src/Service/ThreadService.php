@@ -63,7 +63,7 @@ class ThreadService{
 
             $post_array = json_decode($response->getBody(), true);
 
-        }catch (Exception\GuzzleException $guzzle_ex)
+        }catch (Exception\TransferException $guzzle_ex)
         {
             $post_array = array();
         }
@@ -91,7 +91,7 @@ class ThreadService{
 
             $post_array = json_decode($response->getBody(), true);
 
-        }catch (Exception\GuzzleException $guzzle_ex)
+        }catch (Exception\TransferException $guzzle_ex)
         {
             $post_array = [];
         }

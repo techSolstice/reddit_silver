@@ -89,7 +89,7 @@ class SearchService{
 
             $posts_array = json_decode($response->getBody(), true);
 
-        }catch (Exception\GuzzleException $guzzle_ex)
+        }catch (Exception\TransferException $guzzle_ex)
         {
             $posts_array = [];
         }

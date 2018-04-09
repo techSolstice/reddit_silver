@@ -70,10 +70,16 @@ function populate_posts(parsed_json)
     const REDDIT_HOST = 'https://www.reddit.com';
 
     $.each(parsed_json, function (jsonkey, jsonval) {
+        let media_html = '';
         let epoch_date = parsed_json[jsonkey]['date_created'];
         let date_object = new Date(epoch_date*1000);
         let string_date =  date_object.getMonth() + '/' + date_object.getDate() + '/' + date_object.getFullYear() + ' ' + date_object.getHours() + ':' +  date_object.getMinutes();
         post_counter++;
+
+        if (typeof parsed_json[jsonkey]['author']['media'] !== 'undefined' && typeof parsed_json[jsonkey]['author']['media']['url'] !== 'undefined')
+        {
+            media_html = '<img src="' + parsed_json[jsonkey]['author']['media']['url'] + '">';
+        }
 
         $('.post_score', $('#thread>ul:nth-child(' + post_counter + ')')).text(
             parsed_json[jsonkey]['score']
@@ -82,7 +88,7 @@ function populate_posts(parsed_json)
             '<div><a href="#" onclick="call_external_url(\'' + REDDIT_HOST + parsed_json[jsonkey]['permalink'] + '\')" class="button large" target="_blank">' + parsed_json[jsonkey]['title'] + '</a></div>'
         );
         $('.post_details', $('#thread>ul:nth-child(' + post_counter + ')')).html(
-            'Posted on ' + string_date + ' by ' + parsed_json[jsonkey]['author'] + '<br><img src="/img/stock1.jpeg">'
+            'Posted on ' + string_date + ' by ' + parsed_json[jsonkey]['author'] + '<br>' + media_html
         );
     });
 

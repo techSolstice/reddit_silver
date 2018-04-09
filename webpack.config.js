@@ -10,7 +10,6 @@ Encore
     // uncomment to create hashed filenames (e.g. app.abc123.css)
     // .enableVersioning(Encore.isProduction())
 
-    .addEntry('mainjs', './assets/js/main.js')
     .addEntry('main', './assets/css/main.scss')
 
     // uncomment if you use Sass/SCSS files

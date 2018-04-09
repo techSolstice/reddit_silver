@@ -1,4 +1,5 @@
 <?php
+namespace App;
 
 class VideoMedia extends Media
 {
@@ -18,4 +19,10 @@ class VideoMedia extends Media
                             $media_array['thumbnail_url']
         );
     }
+
+    public function to_array()
+    {
+        return parent::to_array();
+    }
+
 }
